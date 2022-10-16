@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+
+    <p>User is:</p>
+
+    <p>@User.FindFirst(ClaimTypes.NameIdentifier).Value</p>
+    <p>@User.FindFirst(ClaimTypes.Name).Value</p>
+
+    <p>Roles:</p>
+    @{ 
+        foreach (var role in User.FindAll(ClaimTypes.Role))
+        {
+            <p>@role.Value</p>
+        }
+
+    }
+
+</div>

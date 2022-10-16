@@ -1,0 +1,107 @@
+﻿@{
+    Layout = null;
+}
+
+@model List<Person>
+
+@{
+    var PageCount = ViewData["PageCounts"] as int?;
+    var PageNum = ViewData["PageNums"] as int?;
+
+    var SelectedPageCount = ViewData["SelectedPageCount"] as int?;
+    var SelectedPageNum = ViewData["SelectedPageNum"] as int?;
+}
+
+<div class="row my-3">
+    <div class="col-md-3">
+        <label>Record per page:</label>
+        <select id="selectPC" class="form-control">
+            @for (int i = 1; i <= PageCount.Value; i++)
+            {
+                @if (i == SelectedPageCount.Value)
+                {
+                    <option selected value="@i">@i</option>
+                }
+                else
+                {
+                    <option value="@i">@i</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Page number:</label>
+        <select id="selectPN" class="form-control">
+            @for (int i = 1; i <= PageNum.Value; i++)
+            {
+                @if (i == SelectedPageNum.Value)
+                {
+                    <option selected value="@i">@i</option>
+                }
+                else
+                {
+                    <option value="@i">@i</option>
+                }
+            }
+        </select>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Father Name</th>
+            <th>National Code</th>
+            <th>Phone Number</th>
+            <th>Image</th>
+            <th>Added by</th>
+            <th>Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.FirstName</td>
+                <td>@p.LastName</td>
+                <td>@p.FatherName</td>
+                <td>@p.NatCode</td>
+                <td>@p.PhoneNumber</td>
+                <td>
+                    <img style="max-height: 100px" src="@($"data:image/jpeg;base64,{Convert.ToBase64String(p.Img)}")">
+                </td>
+                <td>@p.AddedUserID?.UserName</td>
+                <td>
+                    <a class="btn btn-success" href="/BookList/EditPerson?id=@p.Id" >Edit</a>
+                    <a class="btn btn-danger" href="/api/BookListApi/DeletePerson/@p.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+
+        $(selectPC).on("change", function () {
+            $(selectPN).val('1').change();
+            runAjaxWithPageNumCount();
+        })
+
+        $(selectPN).on("change", function () {
+            runAjaxWithPageNumCount();
+        })
+
+        var runAjaxWithPageNumCount = function () {
+            $.get('/api/BookListApi/GetPartialTable', { filter: $(searchInput).val(), pageNum: $(selectPN).val(), pageCountRec: $(selectPC).val() }, function (value) {
+                $(innerTable).html(value);
+            })
+
+        }
+
+    })
+</script>

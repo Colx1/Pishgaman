@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Add Person";
+}
+
+@model List<Person>
+
+<div class="text-center">
+    <h3 class="display-4">Data Table</h3>
+</div>
+<div class="container mt-5">
+    <div class="col-lg-6 mb-2">
+        <label>Search:</label>
+        <input type="text" id="searchInput" class="form-control" />
+    </div>
+    <div id="innerTable">
+
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var inputVal = null;
+
+        $(searchInput).on("keyup", function (){
+            inputVal = $(this).val()
+
+            runAjax();
+        })
+
+
+        var runAjax = function () {
+            $.get('/api/BookListApi/GetPartialTable', { filter: inputVal }, function (value) {
+                $(innerTable).html(value);
+            })
+        }
+
+        runAjax();
+    })
+</script>
+
+
